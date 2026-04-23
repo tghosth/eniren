@@ -49,7 +49,7 @@ async function handle(req, res) {
   if (p === '/teapot') return send(res, 418, {}, "i'm a teapot");
 
   if (p === '/redirect-http-to-https') {
-    return send(res, 301, { location: 'https://www.lcisec.dev/' }, '');
+    return send(res, 301, { location: 'https://www.example.com/' }, '');
   }
 
   if (p === '/echo' && method === 'POST') {

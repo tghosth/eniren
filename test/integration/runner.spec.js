@@ -17,7 +17,7 @@ describe('integration: end-to-end', () => {
       const script = [
         `GET ${url}/redirect-http-to-https`,
         'compare status == 301',
-        'compare redirect contains https://www.lcisec.dev',
+        'compare redirect contains https://www.example.com',
         '',
       ].join('\n');
       const { paths, cleanup } = await writeTmp({ 's.txt': script });

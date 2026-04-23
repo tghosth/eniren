@@ -5,23 +5,23 @@ import { withServer, writeTmp, runCli } from '../integration/helpers.js';
 const navTxt = `#-----------------------------------------------------------------------------
 # Review all of the main pages and ensure the navigation elements are correct.
 #-----------------------------------------------------------------------------
-GET https://lcisec.com/
+GET https://example.com/
 compare body contains <li><a href="/">Home</a></li>
 compare body contains <li><a href="/strategic">Strategic</a></li>
 compare body contains <li><a href="/tactical">Tactical</a></li>
-compare body contains <li><a href="https://lcisec.dev">Development</a></li>
+compare body contains <li><a href="https://example.com">Development</a></li>
 compare body contains <li><a href="/blog">Blog</a></li>
 compare body contains <li><a href="/contact">Contact</a></li>
 
-GET https://lcisec.com/strategic
+GET https://example.com/strategic
 compare body contains <li><a href="/">Home</a></li>
 compare body contains <li><a href="/strategic">Strategic</a></li>
 compare body contains <li><a href="/tactical">Tactical</a></li>
-compare body contains <li><a href="https://lcisec.dev">Development</a></li>
+compare body contains <li><a href="https://example.com">Development</a></li>
 compare body contains <li><a href="/blog">Blog</a></li>
 compare body contains <li><a href="/contact">Contact</a></li>
 
-GET https://lcisec.com/tactical
+GET https://example.com/tactical
 compare body contains <li><a href="/">Home</a></li>
 `;
 

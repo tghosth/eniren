@@ -37,9 +37,9 @@ describe('logger', () => {
       msg: 'comparison `compare status == 200` failed',
       line: 1,
       script: 'simple.txt',
-      test: 'GET http://www.lcisec.dev',
+      test: 'GET http://www.example.com',
     });
     const out = s.getOutput().trim();
-    expect(out).toBe('ERR comparison `compare status == 200` failed line=1 script=simple.txt test="GET http://www.lcisec.dev"');
+    expect(out).toBe('ERR comparison `compare status == 200` failed line=1 script=simple.txt test="GET http://www.example.com"');
   });
 });

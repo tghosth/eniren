@@ -2,11 +2,11 @@
 
 ## 1. Goals & scope
 
-Re-implement eniren as a Node.js CLI (`eniren`) that:
+Implement eniren as a Node.js CLI (`eniren`) that:
 
 1. Parses and executes `.txt` scripts in the DSL described in the manual.
 2. Reproduces all runtime behavior — cookie jars, variable interpolation (env + extracted), modify/extract/compare semantics, concurrency, logging — with the **single exception of license verification** (`ENIREN_LICENSE`, `~/.eniren/license`, signature/minisign flow).
-3. Runs the three example scripts from `external example scripts` (`tests/nav.txt`, `tests/up.txt`, `tests/security.txt`) against the real `lcisec.com` targets unmodified, with identical pass/fail behavior to the original.
+3. Runs the three example scripts from `external example scripts` (`tests/nav.txt`, `tests/up.txt`, `tests/security.txt`) against their original targets unmodified, with identical pass/fail behavior to the original.
 4. Ships with a local **mock test server** that exercises every feature so the tool can be verified without hitting the internet.
 
 Out of scope: license key validation, the minisign-signed binary download URL, and prebuilt OS/arch bundles. Example CI workflows will need a swap of the "download binary" steps for a Node install step — called out below as the only user-facing breaking change.
@@ -112,7 +112,7 @@ Every parsed test case is augmented with, unless explicitly overridden:
 
 Parse errors and runtime failures share the format from the manual:
 ```
-ERR comparison `compare status == 200` failed line=1 script=simple.txt test="GET http://www.lcisec.dev"
+ERR comparison `compare status == 200` failed line=1 script=simple.txt test="GET http://www.example.com"
 ```
 In JSON mode, the same fields are keys. `line` is 1-indexed and points at the failed command line (not the request line).
 
@@ -184,7 +184,7 @@ A small Node HTTP server (`src/server/testServer.js`) launched via `npm run test
 |---|---|
 | `GET /ok` | 200 OK baseline (default compare) |
 | `GET /teapot` | 418, used to verify `compare status == 418` |
-| `GET /redirect-http-to-https` | 301 with `Location: https://127.0.0.1:8788/ok` — mirrors the `lcisec.dev` redirect example |
+| `GET /redirect-http-to-https` | 301 with `Location: https://127.0.0.1:8788/ok` — mirrors the manual's redirect example |
 | `POST /echo` | echoes body + content-type + headers as JSON — verifies `modify body/type/header` |
 | `ANY /methods` | returns 405 for non-GET — matches manual's POST/405 example |
 | `GET /set-cookie` | sets session cookie `sid=abc123` |
@@ -209,7 +209,7 @@ Verified the three example scripts + three workflows. Compatibility checklist:
 | `compare body contains <literal html>` across many GETs (nav.txt) | ✓ — body compare, substring |
 | `compare header X !contains …` and `compare header X contains …` (security.txt) | ✓ |
 | `compare header Strict-Transport-Security ~ max-age=[0-9]+; includeSubDomains; preload` | ✓ — `~` is regex, note the value contains `;` which is fine since the parser reads "rest of line" after the operator |
-| `-s https://www.lcisec.com tests/up.txt` (ping.yaml) | ✓ |
+| `-s https://www.example.com tests/up.txt` (ping.yaml) | ✓ |
 | `-S targets.txt tests/up.txt` — newline list of URLs | ✓ |
 | `${TARGET_SERVER}` variable injected when `-s`/`-S` set | ✓ — see §5 |
 | Multiple bare `GET` test cases separated by blank lines | ✓ |
@@ -306,7 +306,7 @@ A `npm run test:examples` target clones `external example scripts` (or reference
 
 - `eniren tests/up.txt` with `-s http://127.0.0.1:8787/ok` → mapped target server (we point `${TARGET_SERVER}` at our local server since the real sites may be flaky).
 - `eniren -S local-targets.txt tests/up.txt` with a two-URL file.
-- Parser-only smoke: we parse `tests/nav.txt` and `tests/security.txt` and assert zero parse errors + expected number of test cases (nav: 5 GETs; security: 5 GETs). We don't execute these against real `lcisec.com` in CI to avoid flakiness, but a manual `npm run test:examples:live` target does.
+- Parser-only smoke: we parse `tests/nav.txt` and `tests/security.txt` and assert zero parse errors + expected number of test cases (nav: 5 GETs; security: 5 GETs). We don't execute these against real external targets in CI to avoid flakiness, but a manual `npm run test:examples:live` target does.
 
 ### 11.4 CI pipeline (`.github/workflows/ci.yml`)
 
@@ -320,7 +320,7 @@ Steps:
 5. On tag push, `npm publish` (no license server, no binary build).
 
 Local-only (not in CI):
-- `npm run test:examples:live` — real lcisec.com hits, flagged as flaky.
+- `npm run test:examples:live` — real external hits, flagged as flaky.
 - `npm run test-server` — boots the server for manual poking with curl.
 
 ---
