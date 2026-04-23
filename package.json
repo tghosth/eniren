@@ -1,0 +1,27 @@
+{
+  "name": "eniren",
+  "version": "0.1.0",
+  "description": "JavaScript implementation of a static web-application testing DSL.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "eniren": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:examples": "vitest run test/examples",
+    "test-server": "node src/server/testServer.js",
+    "lint": "echo \"(lint step placeholder)\""
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "tough-cookie": "^4.1.4",
+    "undici": "^6.19.8"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
